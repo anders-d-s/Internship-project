@@ -1,15 +1,14 @@
 ################################################################################
 ############################# Monthly data #####################################
 ################################################################################
-setwd("C:/Users/Ander/Desktop/Praktik/Data")
 
 #Import data
-data <- read.table(file = "[dnk]_[all_factors]_[monthly]_[vw_cap].csv",
+data <- read.table(file = "Data/[dnk]_[all_factors]_[monthly]_[vw_cap].csv",
                           sep = ",", dec = ".",
                           header = TRUE,
                           na.strings = "null")
 #Market return
-mkt <- read.table(file = "[dnk]_[mkt]_[monthly]_[vw_cap].csv",
+mkt <- read.table(file = "Data/[dnk]_[mkt]_[monthly]_[vw_cap].csv",
                    sep = ",", dec = ".",
                    header = TRUE,
                    na.strings = "null")
@@ -82,7 +81,7 @@ monthly_factors <- monthly_factors[-c(1:5),]
 rownames(monthly_factors) <- NULL
 
 # Save your data_list into an .RData file
-save(monthly_factors, file = "monthly_factors.RData")
+save(monthly_factors, file = "Data/monthly_factors.RData")
 
 ################################################################################
 ############################# Daily data #######################################
@@ -91,12 +90,12 @@ save(monthly_factors, file = "monthly_factors.RData")
 rm(list = ls())
 
 #Import data
-data <- read.table(file = "[dnk]_[all_factors]_[daily]_[vw_cap].csv",
+data <- read.table(file = "Data/[dnk]_[all_factors]_[daily]_[vw_cap].csv",
                    sep = ",", dec = ".",
                    header = TRUE,
                    na.strings = "null")
 #Market return
-mkt <- read.table(file = "[dnk]_[mkt]_[daily]_[vw_cap].csv",
+mkt <- read.table(file = "Data/[dnk]_[mkt]_[daily]_[vw_cap].csv",
                   sep = ",", dec = ".",
                   header = TRUE,
                   na.strings = "null")
@@ -169,6 +168,6 @@ daily_factors <- daily_factors[-c(1:19),]
 rownames(daily_factors) <- NULL
 
 # Save your data_list into an .RData file
-save(daily_factors, file = "daily_factors.RData")
-
+save(daily_factors, file = "Data/daily_factors.RData")
+rm(list = ls())
 

@@ -1,10 +1,6 @@
-setwd("C:/Users/Ander/Desktop/Praktik/Data")
 
-load("daily_factors.RData")
-load("monthly_factors.RData")
-
-library(dplyr)
-library(ggplot2)
+load("Data/daily_factors.RData")
+load("Data/monthly_factors.RData")
 
 na_count <- monthly_factors %>%
   mutate(n_nulls = rowSums(is.na(select(., -date))))

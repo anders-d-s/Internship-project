@@ -1,5 +1,5 @@
-load("monthly_ivol.RData")
-load("monthly_factors.RData")
+load("Data/monthly_ivol.RData")
+load("Data/monthly_factors.RData")
 
 #remove mkt factor
 monthly_factors <- monthly_factors[,setdiff(names(monthly_factors), "mkt")]
@@ -34,7 +34,7 @@ for (i in 1:nrow(monthly_ivol)) {
   ivol_groups[i, factor_cols] <- as.list(groups)
 }
 
-save(ivol_groups, file = "ivol_groups.RData")
+save(ivol_groups, file = "Data/ivol_groups.RData")
 
 ###########################################################################
 #MOM
@@ -79,7 +79,7 @@ for (iv in c("IV1","IV2","IV3")) {
 mom_groups[i, factor_cols] <- mom_row
 }
 
-save(mom_groups, file = "mom_groups.RData")
+save(mom_groups, file = "Data/mom_groups.RData")
 
 
 ###########################################################################

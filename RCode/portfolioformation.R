@@ -1,10 +1,6 @@
-setwd("C:/Users/Ander/Desktop/Praktik/Data")
-library(sandwich)
-library(lmtest)
-
-load("mom_groups.RData")
-load("ivol_groups.RData")
-load("monthly_factors.RData")
+load("Data/mom_groups.RData")
+load("Data/ivol_groups.RData")
+load("Data/monthly_factors.RData")
 
 ##################################################################################
 #Portfolio formation
@@ -60,7 +56,7 @@ portfolio_means*100
 ################################################################################
 
 #Import factors
-load("monthly_factors.RData")
+load("Data/monthly_factors.RData")
 data <- as.data.frame(matrix(NA,392,0))
 data$date <- monthly_factors[["date"]][13:404]
 data$mkt <- monthly_factors[["mkt"]][13:404]
@@ -97,10 +93,6 @@ plot.ts(cumprod(1 + data$IV3_LS_MOM) - 1)
 ################################################################################
 ######################## AR1 factor regressions ################################
 ################################################################################
-# Load libraries
-library(dplyr)
-library(purrr)
-library(ggplot2)
 
 # ---- 1. Prepare data ----
 # Remove date column (assumes it's the first column)
@@ -156,9 +148,6 @@ ggplot(results_df, aes(x = reorder(Factor, ar1.ar1), y = ar1.ar1)) +
 ################################################################################
 ######################## Factor Sample Summary Statistics ######################
 ################################################################################
-
-library(dplyr)
-
 # drop date and mkt
 factors <- monthly_factors %>%
   select(-date, -mkt)
@@ -187,9 +176,6 @@ sharpe_ratios <- sharpe_ratios %>%
 
 #sharpe_ratios$Sharpe_annualized <- sharpe_ratios$Sharpe * sqrt(12)
 
-library(ggplot2)
-library(dplyr)
-
 ggplot(expected_returns, aes(x = reorder(Factor, Mean), y = Mean)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   theme_minimal() +
@@ -215,8 +201,7 @@ ggplot(sharpe_ratios, aes(x = reorder(Factor, Sharpe), y = Sharpe)) +
 #################################### Fama macbeth ##############################
 ################################################################################
 
-load("monthly_ivol.RData")
-library(dplyr)
+load("Data/monthly_ivol.RData")
 
 #Lag by 1 to get momentum
 monthly_mom <- monthly_factors %>%
@@ -226,8 +211,6 @@ monthly_mom <- monthly_factors %>%
 monthly_mom <- monthly_mom[-(1:12), !(names(monthly_mom) %in% "mkt")]
 
 returns <- monthly_factors[-(1:12), !(names(monthly_factors) %in% "mkt")]
-
-library(dplyr)
 
 # ── 1st stage: time-series regression per asset to get betas ──────────────────
 assets <- names(returns)[-1]
