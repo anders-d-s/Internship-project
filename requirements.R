@@ -7,7 +7,6 @@ packages <- c(
   "dplyr",
   "lmtest",
   "purrr"
-  # add more packages here
 )
 
 install_if_missing <- function(pkg) {
