@@ -1,0 +1,50 @@
+# drop date and mkt
+factors <- monthly_factors %>%
+  select(-date, -mkt)
+
+expected_returns <- data.frame(
+  Factor = names(factors),
+  Mean = sapply(factors, function(x) mean(x, na.rm = TRUE))
+)
+
+# optional: sort
+expected_returns <- expected_returns %>%
+  arrange(desc(Mean))
+
+sharpe_ratios <- data.frame(
+  Factor = names(factors),
+  Sharpe = sapply(factors, function(x) {
+    m <- mean(x, na.rm = TRUE)
+    s <- sd(x, na.rm = TRUE)
+    m / s
+  })
+)
+
+# optional: sort
+sharpe_ratios <- sharpe_ratios %>%
+  arrange(desc(Sharpe))
+
+#sharpe_ratios$Sharpe_annualized <- sharpe_ratios$Sharpe * sqrt(12)
+
+ggplot(expected_returns, aes(x = reorder(Factor, Mean), y = Mean)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  theme_minimal() +
+  labs(
+    title = "Expected Monthly Returns of Factors",
+    x = "Factor",
+    y = "Mean Return"
+  ) +
+  coord_flip()
+
+ggplot(sharpe_ratios, aes(x = reorder(Factor, Sharpe), y = Sharpe)) +
+  geom_bar(stat = "identity", fill = "darkorange") +
+  theme_minimal() +
+  labs(
+    title = "Sharpe Ratios of Factors (Monthly)",
+    x = "Factor",
+    y = "Sharpe Ratio"
+  ) +
+  coord_flip()
+
+rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))
+
