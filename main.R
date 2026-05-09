@@ -15,3 +15,5 @@ source("Rcode/FF3LongShortRegressions.R")
 source("Rcode/CumulativeReturnsPlot.R")
 
 source("Rcode/AR1.R")
+
+source("Rcode/SummaryStatistics.R")
