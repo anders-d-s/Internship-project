@@ -17,9 +17,9 @@ reg_IV2_LS_MOM <- lm(IV2_LS_MOM ~ mkt + market_equity + be_me, data = data)
 reg_IV3_LS_MOM <- lm(IV3_LS_MOM ~ mkt + market_equity + be_me, data = data)
 reg_LS_IV_LS_MOM <- lm(LS_IV_LS_MOM ~ mkt + market_equity + be_me, data = data)
 
-coeftest(reg_IV1_LS_MOM, vcov = NeweyWest(reg_IV1_LS_MOM, lag = 6, prewhite = FALSE))
-coeftest(reg_IV2_LS_MOM, vcov = NeweyWest(reg_IV2_LS_MOM, lag = 6, prewhite = FALSE))
-coeftest(reg_IV3_LS_MOM, vcov = NeweyWest(reg_IV3_LS_MOM, lag = 6, prewhite = FALSE))
-coeftest(reg_LS_IV_LS_MOM, vcov = NeweyWest(reg_LS_IV_LS_MOM, lag = 6, prewhite = FALSE))
+print(coeftest(reg_IV1_LS_MOM, vcov = NeweyWest(reg_IV1_LS_MOM, lag = 6, prewhite = FALSE)))
+print(coeftest(reg_IV2_LS_MOM, vcov = NeweyWest(reg_IV2_LS_MOM, lag = 6, prewhite = FALSE)))
+print(coeftest(reg_IV3_LS_MOM, vcov = NeweyWest(reg_IV3_LS_MOM, lag = 6, prewhite = FALSE)))
+print(coeftest(reg_LS_IV_LS_MOM, vcov = NeweyWest(reg_LS_IV_LS_MOM, lag = 6, prewhite = FALSE)))
 
 rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))

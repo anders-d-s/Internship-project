@@ -35,7 +35,7 @@ results_df <- results_df %>%
   )
 
 # ---- 5. Plot (sorted low → high) ----
-ggplot(results_df, aes(x = reorder(Factor, ar1.ar1), y = ar1.ar1)) +
+plot <- ggplot(results_df, aes(x = reorder(Factor, ar1.ar1), y = ar1.ar1)) +
   geom_bar(stat = "identity", fill = "grey") +
   geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2) +
   theme_minimal() +
@@ -45,5 +45,7 @@ ggplot(results_df, aes(x = reorder(Factor, ar1.ar1), y = ar1.ar1)) +
     y = "AR(1) Slope"
   ) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+print(plot)
 
 rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))

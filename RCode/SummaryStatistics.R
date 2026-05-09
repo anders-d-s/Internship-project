@@ -26,7 +26,7 @@ sharpe_ratios <- sharpe_ratios %>%
 
 #sharpe_ratios$Sharpe_annualized <- sharpe_ratios$Sharpe * sqrt(12)
 
-ggplot(expected_returns, aes(x = reorder(Factor, Mean), y = Mean)) +
+plot1 <- ggplot(expected_returns, aes(x = reorder(Factor, Mean), y = Mean)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   theme_minimal() +
   labs(
@@ -36,7 +36,7 @@ ggplot(expected_returns, aes(x = reorder(Factor, Mean), y = Mean)) +
   ) +
   coord_flip()
 
-ggplot(sharpe_ratios, aes(x = reorder(Factor, Sharpe), y = Sharpe)) +
+plot2 <- ggplot(sharpe_ratios, aes(x = reorder(Factor, Sharpe), y = Sharpe)) +
   geom_bar(stat = "identity", fill = "darkorange") +
   theme_minimal() +
   labs(
@@ -45,6 +45,9 @@ ggplot(sharpe_ratios, aes(x = reorder(Factor, Sharpe), y = Sharpe)) +
     y = "Sharpe Ratio"
   ) +
   coord_flip()
+
+print(plot1)
+print(plot2)
 
 rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))
 
