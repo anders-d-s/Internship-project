@@ -6,7 +6,7 @@ daily_factors$mkt_lagged <- lag(daily_factors$mkt)
 
 #Extract factor names
 factors <- colnames(monthly_factors)
-factors <- setdiff(factors, c("date", "mkt", "mkt_lagged")) #Remove Date
+factors <- setdiff(factors, c("date", "mkt", "mkt_lagged")) #Remove Date, mkt and mkt_lagged
 
 #compute market factor return (cross sectional avg of the factors for each t)
 #Not for the date and mkt column

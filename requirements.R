@@ -18,4 +18,5 @@ install_if_missing <- function(pkg) {
 invisible(lapply(packages, install_if_missing))
 invisible(lapply(packages, library, character.only = TRUE))
 
+rm(list = ls())
 message("All packages loaded successfully.")

@@ -17,10 +17,10 @@ rm(mkt)
 
 
 #Count number of different names
-names <- unique(data[,2])
+names <- unique(data[,"name"])
 min(data$date)
 max(data$date)
-sorted_dates <- sort(unique(data[,8]), decreasing = FALSE)
+sorted_dates <- sort(unique(data[,"date"]), decreasing = FALSE)
 
 empty_date_dataframe <- data.frame(date = sorted_dates)
 # Start with the empty date frame
@@ -45,15 +45,10 @@ monthly_factors <- monthly_factors[monthly_factors$date >= as.Date("1991-05-31")
 row.names(monthly_factors) <- NULL
 
 #Remove factors with too many NA's
-monthly_factors <- monthly_factors[, setdiff(names(monthly_factors),
-                                             c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1"))]
+monthly_factors <- monthly_factors[, setdiff(names(monthly_factors), c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1"))]
 
 ######################## Handle NA s###########################################
 #6 month rolling mean
-
-#Extract factor names
-factors <- colnames(monthly_factors)
-factors <- setdiff(factors, c("date")) #Remove Date
 
 na_padding <- monthly_factors[rep(1,5), ]
 na_padding[,] <- NA
@@ -62,7 +57,7 @@ na_padding[,] <- NA
 monthly_factors <- rbind(na_padding, monthly_factors)
 rownames(monthly_factors) <- NULL
 
-for (factor in factors) {
+for (factor in names) {
   
   start_index <- which(!is.na(monthly_factors[[factor]]))[1]
   end_index <- tail(which(!is.na(monthly_factors[[factor]])), 1)
@@ -104,10 +99,10 @@ rm(mkt)
 
 
 #Count number of different names
-names <- unique(data[,2])
+names <- unique(data[,"name"])
 min(data$date)
 max(data$date)
-sorted_dates <- sort(unique(data[,8]), decreasing = FALSE)
+sorted_dates <- sort(unique(data[,"date"]), decreasing = FALSE)
 
 empty_date_dataframe <- data.frame(date = sorted_dates)
 # Start with the empty date frame
@@ -138,10 +133,6 @@ daily_factors <- daily_factors[, setdiff(names(daily_factors),
 ######################## Handle NA s###########################################
 #20 day rolling mean
 
-#Extract factor names
-factors <- colnames(daily_factors)
-factors <- setdiff(factors, c("date")) #Remove Date
-
 na_padding <- daily_factors[rep(1,19), ]
 na_padding[,] <- NA
 
@@ -149,7 +140,7 @@ na_padding[,] <- NA
 daily_factors <- rbind(na_padding, daily_factors)
 rownames(daily_factors) <- NULL
 
-for (factor in factors) {
+for (factor in names) {
   
   start_index <- which(!is.na(daily_factors[[factor]]))[1]
   end_index <- tail(which(!is.na(daily_factors[[factor]])), 1)
