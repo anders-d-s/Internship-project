@@ -45,5 +45,6 @@ for (i in 1:nrow(ivol_groups)) {
 # View results
 #portfolio_means*100
 
-#keep only output variable
-rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))
+#clean up
+keep <- c(keep, "portfolio_returns_3x3")
+rm(list = setdiff(ls(), keep))

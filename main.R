@@ -8,7 +8,11 @@ load("Data/mom_groups.RData")
 load("Data/ivol_groups.RData")
 load("Data/monthly_factors.RData")
 
+keep <- c("keep","ivol_groups","mom_groups","monthly_factors")
+
 source("Rcode/PortfolioFormation.R")
+
+source("Rcode/ControlForFirstPrincipalComponent.R")
 
 source("Rcode/FF3LongShortRegressions.R")
 

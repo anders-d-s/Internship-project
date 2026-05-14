@@ -48,4 +48,5 @@ plot <- ggplot(results_df, aes(x = reorder(Factor, ar1.ar1), y = ar1.ar1)) +
 
 print(plot)
 
-rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))
+#clean up
+rm(list = setdiff(ls(), keep))

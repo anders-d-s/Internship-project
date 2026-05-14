@@ -12,4 +12,5 @@ plot.ts(cumprod(1 + data$IV1_LS_MOM) - 1)
 plot.ts(cumprod(1 + data$IV2_LS_MOM) - 1)
 plot.ts(cumprod(1 + data$IV3_LS_MOM) - 1)
 
-rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))
+#clean up
+rm(list = setdiff(ls(), keep))

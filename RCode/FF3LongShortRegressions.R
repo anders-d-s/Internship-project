@@ -22,4 +22,5 @@ print(coeftest(reg_IV2_LS_MOM, vcov = NeweyWest(reg_IV2_LS_MOM, lag = 6, prewhit
 print(coeftest(reg_IV3_LS_MOM, vcov = NeweyWest(reg_IV3_LS_MOM, lag = 6, prewhite = FALSE)))
 print(coeftest(reg_LS_IV_LS_MOM, vcov = NeweyWest(reg_LS_IV_LS_MOM, lag = 6, prewhite = FALSE)))
 
-rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))
+#clean up
+rm(list = setdiff(ls(), keep))

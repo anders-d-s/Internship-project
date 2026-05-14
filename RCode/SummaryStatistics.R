@@ -49,5 +49,5 @@ plot2 <- ggplot(sharpe_ratios, aes(x = reorder(Factor, Sharpe), y = Sharpe)) +
 print(plot1)
 print(plot2)
 
-rm(list = setdiff(ls(), c("portfolio_returns_3x3","ivol_groups","mom_groups","monthly_factors")))
-
+#clean up
+rm(list = setdiff(ls(), keep))
