@@ -6,7 +6,8 @@ packages <- c(
   "ggplot2",
   "dplyr",
   "lmtest",
-  "purrr"
+  "purrr",
+  "readxl"
 )
 
 install_if_missing <- function(pkg) {
