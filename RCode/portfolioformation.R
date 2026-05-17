@@ -13,24 +13,21 @@ portfolio_returns_3x3 <- data.frame(
 # Loop over months
 for (i in 1:nrow(ivol_groups)) {
   
-  # IVOL and MOM groups for this month
+  current_date <- ivol_groups$date[i]
+  
   ivol_grp <- as.character(ivol_groups[i, factor_cols])
   mom_grp  <- as.character(mom_groups[i, factor_cols])
   
-  # Returns for this month
-  returns <- as.numeric(monthly_factors[i, factor_cols])
+  # Match by date instead of row index
+  mf_row <- which(monthly_factors$date == current_date)
+  returns <- as.numeric(monthly_factors[mf_row, factor_cols])
   
-  # Loop over all combinations of IVOL × MOM
   for (iv in c("IV1","IV2","IV3")) {
     for (mo in c("M1","M2","M3")) {
-      # Logical index for factors in both groups
       idx <- (ivol_grp == iv) & (mom_grp == mo)
-      
-      # Portfolio name
       port_name <- paste0(iv, "_", mo)
-      
-      # Average return
-      portfolio_returns_3x3[i, port_name] <- mean(returns[idx], na.rm = TRUE)
+      avg_ret <- mean(returns[idx], na.rm = TRUE)
+      portfolio_returns_3x3[i, port_name] <- ifelse(is.nan(avg_ret), NA, avg_ret)
     }
   }
 }

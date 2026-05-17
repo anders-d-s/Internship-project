@@ -4,6 +4,7 @@ rm(list = ls())
 #Load necessary packages
 source("requirements.R")
 
+#Rerun post publication data code
 source("RCode/PostPublication/data.R")
 source("RCode/PostPublication/ivol_mom_calc.R")
 source("RCode/PostPublication/ivol_mom_groups.R")
