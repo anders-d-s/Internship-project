@@ -4,13 +4,23 @@ rm(list = ls())
 #Load necessary packages
 source("requirements.R")
 
-#source("Rcode/data.R")
-#source("Rcode/ivol_mom_calc.R")
-#source("Rcode/ivol_mom_groups.R")
+source("RCode/PostPublication/data.R")
+source("RCode/PostPublication/ivol_mom_calc.R")
+source("RCode/PostPublication/ivol_mom_groups.R")
 
-load("Data/mom_groups.RData")
-load("Data/ivol_groups.RData")
-load("Data/monthly_factors.RData")
+#c("standard", "postpublication")
+
+type <- "postpublication"
+
+if (type == "standard") {
+  load("Data/mom_groups.RData")
+  load("Data/ivol_groups.RData")
+  load("Data/monthly_factors.RData")
+} else if (type == "postpublication") {
+  load("RCode/PostPublication/mom_groups.RData")
+  load("RCode/PostPublication/ivol_groups.RData")
+  load("RCode/PostPublication/monthly_factors.RData")
+}
 
 keep <- c("keep","ivol_groups","mom_groups","monthly_factors")
 

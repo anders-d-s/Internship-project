@@ -46,7 +46,7 @@ mom_groups[, factor_cols] <- NA
 mom_groups <- mom_groups[-(1:12),]
 row.names(mom_groups) <- NULL
 
-for (i in 1:nrow(monthly_factors)-12) {
+for (i in 1:(nrow(monthly_factors)-12)) {
   
 # Current month values
 #monthly_factor i+11 = 1992-04-30 (momentum is lagged return)

@@ -40,6 +40,8 @@ for (nm in names) {
 
 monthly_factors <- loc_df
 
+source("Rcode/PostPublication/PostPublication_monthly.R")
+
 #Remove data before 1991-05-01 due to missing data (64 obs)
 monthly_factors <- monthly_factors[monthly_factors$date >= as.Date("1991-05-31"), ]
 row.names(monthly_factors) <- NULL
@@ -47,6 +49,7 @@ row.names(monthly_factors) <- NULL
 #Remove factors with too many NA's
 monthly_factors <- monthly_factors[, setdiff(names(monthly_factors), c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1"))]
 
+names <- names[!names %in% c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1")]
 ######################## Handle NA s###########################################
 #6 month rolling mean
 
@@ -76,7 +79,7 @@ monthly_factors <- monthly_factors[-c(1:5),]
 rownames(monthly_factors) <- NULL
 
 # Save your data_list into an .RData file
-save(monthly_factors, file = "Data/monthly_factors.RData")
+save(monthly_factors, file = "RCode/PostPublication/monthly_factors.RData")
 
 ################################################################################
 ############################# Daily data #######################################
@@ -122,6 +125,8 @@ for (nm in names) {
 
 daily_factors <- loc_df
 
+source("Rcode/PostPublication/PostPublication_daily.R")
+
 #Remove data before 1991-05-01 due to missing data
 daily_factors <- daily_factors[daily_factors$date >= as.Date("1991-05-01"), ]
 row.names(daily_factors) <- NULL
@@ -129,6 +134,8 @@ row.names(daily_factors) <- NULL
 #Remove factors with too many NA's
 daily_factors <- daily_factors[, setdiff(names(daily_factors),
                                              c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1"))]
+
+names <- names[!names %in% c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1")]
 
 ######################## Handle NA s###########################################
 #20 day rolling mean
@@ -159,6 +166,6 @@ daily_factors <- daily_factors[-c(1:19),]
 rownames(daily_factors) <- NULL
 
 # Save your data_list into an .RData file
-save(daily_factors, file = "Data/daily_factors.RData")
+save(daily_factors, file = "RCode/PostPublication/daily_factors.RData")
 rm(list = ls())
 

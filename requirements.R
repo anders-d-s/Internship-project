@@ -7,7 +7,8 @@ packages <- c(
   "dplyr",
   "lmtest",
   "purrr",
-  "readxl"
+  "readxl",
+  "lubridate"
 )
 
 install_if_missing <- function(pkg) {
