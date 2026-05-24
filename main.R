@@ -11,7 +11,7 @@ source("RCode/PostPublication/ivol_mom_groups.R")
 
 #c("standard", "postpublication")
 
-type <- "postpublication"
+type <- "standard"
 
 if (type == "standard") {
   load("Data/mom_groups.RData")

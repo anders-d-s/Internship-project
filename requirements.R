@@ -8,7 +8,8 @@ packages <- c(
   "lmtest",
   "purrr",
   "readxl",
-  "lubridate"
+  "lubridate",
+  "monotonicity"
 )
 
 install_if_missing <- function(pkg) {
