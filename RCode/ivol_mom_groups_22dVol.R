@@ -1,4 +1,4 @@
-load("Data/monthly_ivol_22d.RData")
+load("Data/monthly_ivol_22dVol.RData")
 load("Data/monthly_factors.RData")
 
 #remove mkt factor

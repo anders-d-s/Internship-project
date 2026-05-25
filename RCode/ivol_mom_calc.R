@@ -45,7 +45,7 @@ ivol_df[(start_index + 251 + i - 1),factor] <- sqrt(var(fit[["residuals"]]))
   }
 }
 
-save(ivol_df, file = "daily_ivol.RData")
+save(ivol_df, file = "Data/daily_ivol.RData")
 
 #load("Data/daily_ivol.RData")
 

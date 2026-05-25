@@ -45,7 +45,7 @@ for (factor in factors) {
   }
 }
 
-save(ivol_df, file = "daily_ivol_22d.RData")
+save(ivol_df, file = "Data/daily_ivol_22dVol.RData")
 
 #load("Data/daily_ivol.RData")
 
@@ -68,5 +68,5 @@ monthly_ivol <- monthly_ivol[-(1:12),]
 row.names(monthly_ivol) <- NULL
 
 
-save(monthly_ivol, file = "Data/monthly_ivol_22d.RData")
+save(monthly_ivol, file = "Data/monthly_ivol_22dVol.RData")
 
