@@ -34,13 +34,13 @@ for (i in 1:nrow(ivol_groups)) {
 
 
 # Exclude the date column
-#portfolio_cols <- setdiff(names(portfolio_returns_bi), "date")
+portfolio_cols <- setdiff(names(portfolio_returns_3x3), "date")
 
 # Compute column-wise mean
-#portfolio_means <- colMeans(portfolio_returns_bi[, portfolio_cols], na.rm = TRUE)
+portfolio_means <- colMeans(portfolio_returns_3x3[, portfolio_cols], na.rm = TRUE)
 
 # View results
-#portfolio_means*100
+print(portfolio_means*100)
 
 #clean up
 keep <- c(keep, "portfolio_returns_3x3")

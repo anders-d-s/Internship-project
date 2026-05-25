@@ -10,14 +10,25 @@ source("RCode/PostPublication/ivol_mom_calc.R")
 source("RCode/PostPublication/ivol_mom_groups.R")
 
 #c("standard", "postpublication")
-
 type <- "standard"
+#c("22d", "252d")
+vol_calc <- "22d"
 
 if (type == "standard") {
-  load("Data/mom_groups.RData")
+  if (vol_calc == "22d") {
+    print("22 Day Volatility")
+    load("Data/ivol_groups_22dVol.RData")
+    load("Data/mom_groups_22dVol.RData")
+    load("Data/monthly_factors.RData")
+    
+  } else if (vol_calc == "252d") {
+  print("252 Day Volatility")
   load("Data/ivol_groups.RData")
+  load("Data/mom_groups.RData")
   load("Data/monthly_factors.RData")
-} else if (type == "postpublication") {
+  }
+} else if (type == "postpublication") { 
+  print("Post Publication")
   load("RCode/PostPublication/mom_groups.RData")
   load("RCode/PostPublication/ivol_groups.RData")
   load("RCode/PostPublication/monthly_factors.RData")

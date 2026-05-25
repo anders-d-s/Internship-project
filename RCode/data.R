@@ -46,9 +46,10 @@ row.names(monthly_factors) <- NULL
 
 #Remove factors with too many NA's
 monthly_factors <- monthly_factors[, setdiff(names(monthly_factors), c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1"))]
-
+names <- setdiff(names, c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1"))
 ######################## Handle NA s###########################################
 #6 month rolling mean
+
 
 na_padding <- monthly_factors[rep(1,5), ]
 na_padding[,] <- NA
@@ -129,7 +130,7 @@ row.names(daily_factors) <- NULL
 #Remove factors with too many NA's
 daily_factors <- daily_factors[, setdiff(names(daily_factors),
                                              c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1"))]
-
+names <- setdiff(names, c("iskew_ff3_21d", "ivol_ff3_21d", "resff3_6_1", "resff3_12_1"))
 ######################## Handle NA s###########################################
 #20 day rolling mean
 

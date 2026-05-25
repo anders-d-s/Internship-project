@@ -45,7 +45,7 @@ portfolio_cols <- setdiff(names(portfolio_returns_5x5), "date")
 portfolio_means <- colMeans(portfolio_returns_5x5[, portfolio_cols], na.rm = TRUE)
 
 # View results
-portfolio_means*100
+print(portfolio_means*100)
 
 #clean up
 keep <- c(keep, "portfolio_returns_5x5", "portfolio_means")
