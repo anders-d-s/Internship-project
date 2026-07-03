@@ -9,7 +9,8 @@ packages <- c(
   "purrr",
   "readxl",
   "lubridate",
-  "monotonicity"
+  "monotonicity",
+  "zoo"
 )
 
 install_if_missing <- function(pkg) {
