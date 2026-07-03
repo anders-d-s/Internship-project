@@ -1,5 +1,4 @@
-load("Data/mom_groups_5x5.RData")
-load("Data/ivol_groups_5x5.RData")
+mom_groups <- mom_groups_12_1_252d_ivol
 load("Data/monthly_factors.RData")
 
 #Portfolio formation

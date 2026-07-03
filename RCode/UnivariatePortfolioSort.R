@@ -1,6 +1,56 @@
-load("Data/ivol_groups_independent.RData")
-load("Data/mom_groups_independent.RData")
+load("Data/monthly_ivol_252d.RData")
+load("Data/mom_signal_12_1.RData")
+monthly_mom <- mom_signal_12_1[-(1:12), ]
+row.names(monthly_mom) <- NULL
 load("Data/monthly_factors.RData")
+
+################################################################################
+# Function to create 30/40/30 univariate portfolio assignments
+################################################################################
+
+build_univariate_groups <- function(df,
+                                    low_label = "P1",
+                                    mid_label = "P2",
+                                    high_label = "P3") {
+  
+  factor_cols <- setdiff(names(df), "date")
+  
+  groups <- df
+  groups[, factor_cols] <- NA
+  
+  for (i in seq_len(nrow(df))) {
+    
+    vals <- as.numeric(df[i, factor_cols])
+    
+    p30 <- quantile(vals, 0.30, na.rm = TRUE)
+    p70 <- quantile(vals, 0.70, na.rm = TRUE)
+    
+    grp <- ifelse(vals <= p30, low_label,
+                  ifelse(vals <= p70, mid_label, high_label))
+    
+    groups[i, factor_cols] <- as.list(grp)
+  }
+  
+  groups
+}
+
+# IVOL groups
+ivol_groups <- build_univariate_groups(
+  monthly_ivol,
+  low_label = "IV1",
+  mid_label = "IV2",
+  high_label = "IV3"
+)
+
+# Momentum groups
+mom_groups <- build_univariate_groups(
+  monthly_mom,
+  low_label = "M1",
+  mid_label = "M2",
+  high_label = "M3"
+)
+
+#--------------------------------------------------------------------------
 
 # Univariate portfolio formation - IV only
 portfolio_returns_IV <- data.frame(
@@ -24,6 +74,8 @@ for (i in 1:nrow(ivol_groups)) {
   }
 }
 
+portfolio_returns_IV$IV_LS <- portfolio_returns_IV$IV3 - portfolio_returns_IV$IV1
+
 # Define periods
 n_months   <- nrow(portfolio_returns_IV)  # fixed
 mid_point  <- floor(n_months / 2)
@@ -42,7 +94,7 @@ cat("IV - Full period:\n");  print(round(portfolio_means_IV_full   * 100, 2))
 cat("IV - First half:\n");   print(round(portfolio_means_IV_first  * 100, 2))
 cat("IV - Second half:\n");  print(round(portfolio_means_IV_second * 100, 2))
 
-#################################################################################
+#----------------------------------------------------------------------
 
 # Univariate portfolio formation - M only
 portfolio_returns_M <- data.frame(
@@ -65,6 +117,9 @@ for (i in 1:nrow(mom_groups)) {
     portfolio_returns_M[i, mo] <- ifelse(is.nan(avg_ret), NA, avg_ret)
   }
 }
+
+portfolio_returns_M$M_LS <- portfolio_returns_M$M3 - portfolio_returns_M$M1
+
 
 # Define periods
 n_months   <- nrow(portfolio_returns_M)

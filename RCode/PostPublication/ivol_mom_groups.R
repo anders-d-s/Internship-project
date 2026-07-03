@@ -1,98 +1,158 @@
-load("RCode/PostPublication/monthly_ivol.RData")
 load("RCode/PostPublication/monthly_factors.RData")
 
-#remove mkt factor
-monthly_factors <- monthly_factors[,setdiff(names(monthly_factors), "mkt")]
-row.names(monthly_factors) <- NULL
+# Exclude date and mkt, keep only the factor return columns
+factor_cols <- setdiff(names(monthly_factors), c("date", "mkt"))
+
+log_rets <- log(1 + monthly_factors[, factor_cols])
+
+# General N-1 momentum builder:
+# window = (N-1) months, right-aligned at row t -> covers (t-(N-2)):t
+# then shift down 2 rows so the value stored at row t = sum over (t-N):(t-2),
+# i.e. an (N-1)-month cumulative return skipping the most recent month (t-1)
+build_mom_signal <- function(log_rets, N, dates) {
+  
+  width <- N - 1
+  
+  roll_sum <- zoo::rollapply(log_rets, width = width, FUN = sum, align = "right",
+                             fill = NA, na.rm = FALSE)
+  
+  n <- nrow(roll_sum)
+  mom_log <- rbind(
+    matrix(NA_real_, nrow = 2, ncol = ncol(roll_sum),
+           dimnames = list(NULL, colnames(roll_sum))),
+    roll_sum[1:(n - 2), , drop = FALSE]
+  )
+  
+  mom <- exp(mom_log) - 1
+  
+  out <- data.frame(date = dates, mom)
+  row.names(out) <- NULL
+  out
+}
+
+mom_signal_12_1 <- build_mom_signal(log_rets, 12, monthly_factors$date)
+mom_signal_9_1  <- build_mom_signal(log_rets, 9,  monthly_factors$date)
+mom_signal_6_1  <- build_mom_signal(log_rets, 6,  monthly_factors$date)
+mom_signal_3_1  <- build_mom_signal(log_rets, 3,  monthly_factors$date)
+
+#------------------------------------------------------------------------------
+
+load("RCode/PostPublication/monthly_ivol.RData")
 
 #################################################################################
-#IVOL
-#30p/70p
-
-# Create empty dataframe for groups
+# IVOL
+# 30p/70p
 ivol_groups <- monthly_ivol
 ivol_groups[, -which(names(ivol_groups) == "date")] <- NA
 
-# Factor columns (exclude date)
 factor_cols <- setdiff(names(monthly_ivol), "date")
 
-# Loop over rows (months)
 for (i in 1:nrow(monthly_ivol)) {
   
-  # Extract row values
   row_vals <- as.numeric(monthly_ivol[i, factor_cols])
   
-  # Compute breakpoints
   p30 <- quantile(row_vals, probs = 0.3, na.rm = TRUE)
   p70 <- quantile(row_vals, probs = 0.7, na.rm = TRUE)
   
-  # Assign S / M / L
   groups <- ifelse(row_vals <= p30, "IV1",
                    ifelse(row_vals <= p70, "IV2", "IV3"))
   
-  # Store result
   ivol_groups[i, factor_cols] <- as.list(groups)
 }
 
-save(ivol_groups, file = "RCode/PostPublication/ivol_groups.RData")
-
 ###########################################################################
-#MOM
-factor_cols <- setdiff(names(monthly_factors), "date")
+# MOM
+# Dependent double sort: within each IVOL group, rank on the momentum
+# signal and assign M1 (bottom 30%) / M2 (middle 40%) / M3 (top 30%).
+#
+# Momentum now comes from the pre-built signal files (mom_signal_12_1.RData
+# etc.), which already encode the N-1 month cumulative log return, skipping
+# the most recent month, and are stored on the date the signal is *used*
+# (i.e. already aligned/lagged correctly). So no manual row-index offsetting
+# against monthly_factors is needed anymore -- alignment is done by date.
 
-# Keep date column, set others to NA
-mom_groups <- monthly_factors[, c("date", factor_cols)]
-mom_groups[, factor_cols] <- NA
-mom_groups <- mom_groups[-(1:12),]
-row.names(mom_groups) <- NULL
-
-for (i in 1:(nrow(monthly_factors)-12)) {
+build_mom_groups <- function(mom_signal, ivol_groups, factor_cols) {
   
-# Current month values
-#monthly_factor i+11 = 1992-04-30 (momentum is lagged return)
-#ivol_groups i = 1992-05-31
-mom_vals <- as.numeric(monthly_factors[i+11, factor_cols])
-ivol_grp <- as.character(ivol_groups[i, factor_cols])
-
-# Initialize MOM row
-mom_row <- rep(NA, length(mom_vals))
-
-for (iv in c("IV1","IV2","IV3")) {
+  # Keep only dates present in both inputs
+  common_dates <- intersect(mom_signal$date, ivol_groups$date)
   
-  # Indices for this IVOL group
-  idx_iv <- which(ivol_grp == iv)
+  mom_signal   <- mom_signal[mom_signal$date %in% common_dates, ]
+  ivol_aligned <- ivol_groups[ivol_groups$date %in% common_dates, ]
   
-  if (length(idx_iv) > 0) {
-    # MOM values within IVOL group
-    mom_subset <- mom_vals[idx_iv]
+  mom_signal   <- mom_signal[order(mom_signal$date), ]
+  ivol_aligned <- ivol_aligned[order(ivol_aligned$date), ]
+  
+  # Drop leading rows where the momentum signal isn't defined yet
+  has_mom <- rowSums(!is.na(mom_signal[, factor_cols, drop = FALSE])) > 0
+  mom_signal   <- mom_signal[has_mom, ]
+  ivol_aligned <- ivol_aligned[has_mom, ]
+  
+  mom_groups <- mom_signal[, c("date", factor_cols)]
+  mom_groups[, factor_cols] <- NA
+  row.names(mom_groups) <- NULL
+  
+  for (i in seq_len(nrow(mom_signal))) {
     
-    # Compute 30/70 breakpoints within IVOL group
-    p30 <- quantile(mom_subset, 0.3, na.rm = TRUE)
-    p70 <- quantile(mom_subset, 0.7, na.rm = TRUE)
+    mom_vals <- as.numeric(mom_signal[i, factor_cols])
+    ivol_grp <- as.character(ivol_aligned[i, factor_cols])  # matched by column name
     
-    # Assign MOM groups
-    mom_row[idx_iv] <- ifelse(mom_subset <= p30, "M1",
-                              ifelse(mom_subset <= p70, "M2", "M3"))
+    mom_row <- rep(NA, length(mom_vals))
+    
+    for (iv in c("IV1", "IV2", "IV3")) {
+      
+      idx_iv <- which(ivol_grp == iv)
+      
+      if (length(idx_iv) > 0) {
+        
+        mom_subset <- mom_vals[idx_iv]
+        
+        p30 <- quantile(mom_subset, 0.3, na.rm = TRUE)
+        p70 <- quantile(mom_subset, 0.7, na.rm = TRUE)
+        
+        mom_row[idx_iv] <- ifelse(mom_subset <= p30, "M1",
+                                  ifelse(mom_subset <= p70, "M2", "M3"))
+      }
+    }
+    
+    mom_groups[i, factor_cols] <- mom_row
   }
-}
-  # Store dependent MOM assignment in factor columns only
-mom_groups[i, factor_cols] <- mom_row
+  
+  mom_groups
 }
 
-save(mom_groups, file = "RCode/PostPublication/mom_groups.RData")
+factor_cols_mom <- setdiff(names(mom_signal_12_1), "date")
 
+# Sanity check: the momentum signals and the IVOL groups should cover the
+# same set of factor columns
+stopifnot(identical(sort(factor_cols_mom), sort(factor_cols)))
+
+mom_groups_12_1_252d_ivol <- build_mom_groups(mom_signal_12_1, ivol_groups, factor_cols_mom)
+mom_groups_9_1_252d_ivol  <- build_mom_groups(mom_signal_9_1,  ivol_groups, factor_cols_mom)
+mom_groups_6_1_252d_ivol  <- build_mom_groups(mom_signal_6_1,  ivol_groups, factor_cols_mom)
+mom_groups_3_1_252d_ivol  <- build_mom_groups(mom_signal_3_1,  ivol_groups, factor_cols_mom)
 
 ###########################################################################
-#Test
+# Test
 
-# Create table counts first
-tab <- table(
-  IVOL = as.vector(as.matrix(ivol_groups[, factor_cols])),
-  MOM  = as.vector(as.matrix(mom_groups[, factor_cols]))
-)
+check_tab <- function(mom_groups, ivol_groups, factor_cols) {
+  
+  common_dates <- intersect(mom_groups$date, ivol_groups$date)
+  
+  ivol_sub <- ivol_groups[ivol_groups$date %in% common_dates, factor_cols]
+  mom_sub  <- mom_groups[mom_groups$date %in% common_dates, factor_cols]
+  
+  tab <- table(
+    IVOL = as.vector(as.matrix(ivol_sub)),
+    MOM  = as.vector(as.matrix(mom_sub))
+  )
+  
+  prop.table(tab, margin = 1) * 100
+}
 
-# Convert to percentages within each IVOL row
-tab_percent <- prop.table(tab, margin = 1) * 100
+check_tab(mom_groups_12_1_252d_ivol, ivol_groups, factor_cols_mom)
+check_tab(mom_groups_9_1_252d_ivol,  ivol_groups, factor_cols_mom)
+check_tab(mom_groups_6_1_252d_ivol,  ivol_groups, factor_cols_mom)
+check_tab(mom_groups_3_1_252d_ivol,  ivol_groups, factor_cols_mom)
 
-# View results
-tab_percent
+
+mom_groups <- mom_groups_12_1_252d_ivol
