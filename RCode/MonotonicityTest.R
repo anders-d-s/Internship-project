@@ -1,5 +1,7 @@
 results <- list()
 
+set.seed(123)
+
 # Test monotonicity across M1->M2->M3 within each IV group
 for (iv in 1:3) {
   cols <- paste0("IV", iv, "_M", 1:3)

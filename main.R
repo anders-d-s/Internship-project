@@ -6,9 +6,9 @@ source("requirements.R")
 
 #-------------------------------------------------------------------------
 #run post publication code
-source("RCode/PostPublication/data.R")
-source("RCode/PostPublication/ivol_mom_calc.R")
-source("RCode/PostPublication/ivol_mom_groups.R")
+#source("RCode/PostPublication/data.R")
+#source("RCode/PostPublication/ivol_mom_calc.R")
+#source("RCode/PostPublication/ivol_mom_groups.R")
 #-------------------------------------------------------------------------
 #c("22d", "252d")
 vol_type <- "252d"
@@ -46,7 +46,8 @@ keep <- c("keep","ivol_groups","mom_groups","monthly_factors")
 
 source("Rcode/PortfolioFormation_3x3.R")
 
-source("Rcode/MonotonicityTest.R")
+invisible(capture.output(source("Rcode/MonotonicityTest.R")))
+round(sapply(results, function(x) x[["MR_pval"]]), 3)
 
 source("Rcode/ControlForFirstPrincipalComponent.R")
 

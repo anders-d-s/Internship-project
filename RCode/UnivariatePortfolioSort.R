@@ -34,6 +34,39 @@ build_univariate_groups <- function(df,
   groups
 }
 
+################################################################################
+# Helper: mean + t-stat for each column over a given set of rows
+################################################################################
+
+compute_mean_tstat <- function(df, cols, idx) {
+  out <- data.frame(
+    mean  = rep(NA_real_, length(cols)),
+    tstat = rep(NA_real_, length(cols)),
+    row.names = cols
+  )
+  
+  for (cl in cols) {
+    x <- df[idx, cl]
+    x <- x[!is.na(x)]
+    if (length(x) > 1) {
+      tt <- t.test(x)
+      out[cl, "mean"]  <- tt$estimate
+      out[cl, "tstat"] <- tt$statistic
+    }
+  }
+  out
+}
+
+print_stats <- function(stats_df, label) {
+  cat(label, "\n")
+  df_out <- data.frame(
+    mean_pct = round(stats_df$mean * 100, 2),
+    tstat    = round(stats_df$tstat, 2),
+    row.names = rownames(stats_df)
+  )
+  print(df_out)
+}
+
 # IVOL groups
 ivol_groups <- build_univariate_groups(
   monthly_ivol,
@@ -83,16 +116,25 @@ full_idx   <- 1:n_months
 first_idx  <- 1:mid_point
 second_idx <- (mid_point + 1):n_months
 
-# Compute means over each period
+print_date_range <- function(dates, idx, label) {
+  cat(label, ":", as.character(min(dates[idx])), "to", as.character(max(dates[idx])), "\n")
+}
+
+# For IV (or M, should be the same dates)
+print_date_range(portfolio_returns_IV$date, full_idx,   "Full period")
+print_date_range(portfolio_returns_IV$date, first_idx,  "First half")
+print_date_range(portfolio_returns_IV$date, second_idx, "Second half")
+
+# Compute mean + t-stat over each period
 portfolio_cols_IV <- setdiff(names(portfolio_returns_IV), "date")
 
-portfolio_means_IV_full   <- colMeans(portfolio_returns_IV[full_idx,   portfolio_cols_IV], na.rm = TRUE)
-portfolio_means_IV_first  <- colMeans(portfolio_returns_IV[first_idx,  portfolio_cols_IV], na.rm = TRUE)
-portfolio_means_IV_second <- colMeans(portfolio_returns_IV[second_idx, portfolio_cols_IV], na.rm = TRUE)
+portfolio_stats_IV_full   <- compute_mean_tstat(portfolio_returns_IV, portfolio_cols_IV, full_idx)
+portfolio_stats_IV_first  <- compute_mean_tstat(portfolio_returns_IV, portfolio_cols_IV, first_idx)
+portfolio_stats_IV_second <- compute_mean_tstat(portfolio_returns_IV, portfolio_cols_IV, second_idx)
 
-cat("IV - Full period:\n");  print(round(portfolio_means_IV_full   * 100, 2))
-cat("IV - First half:\n");   print(round(portfolio_means_IV_first  * 100, 2))
-cat("IV - Second half:\n");  print(round(portfolio_means_IV_second * 100, 2))
+print_stats(portfolio_stats_IV_full,   "IV - Full period:")
+print_stats(portfolio_stats_IV_first,  "IV - First half:")
+print_stats(portfolio_stats_IV_second, "IV - Second half:")
 
 #----------------------------------------------------------------------
 
@@ -120,7 +162,6 @@ for (i in 1:nrow(mom_groups)) {
 
 portfolio_returns_M$M_LS <- portfolio_returns_M$M3 - portfolio_returns_M$M1
 
-
 # Define periods
 n_months   <- nrow(portfolio_returns_M)
 mid_point  <- floor(n_months / 2)
@@ -128,16 +169,25 @@ full_idx   <- 1:n_months
 first_idx  <- 1:mid_point
 second_idx <- (mid_point + 1):n_months
 
-# Compute means over each period
+print_date_range <- function(dates, idx, label) {
+  cat(label, ":", as.character(min(dates[idx])), "to", as.character(max(dates[idx])), "\n")
+}
+
+# For IV (or M, should be the same dates)
+print_date_range(portfolio_returns_IV$date, full_idx,   "Full period")
+print_date_range(portfolio_returns_IV$date, first_idx,  "First half")
+print_date_range(portfolio_returns_IV$date, second_idx, "Second half")
+
+# Compute mean + t-stat over each period
 portfolio_cols_M <- setdiff(names(portfolio_returns_M), "date")
 
-portfolio_means_M_full   <- colMeans(portfolio_returns_M[full_idx,   portfolio_cols_M], na.rm = TRUE)
-portfolio_means_M_first  <- colMeans(portfolio_returns_M[first_idx,  portfolio_cols_M], na.rm = TRUE)
-portfolio_means_M_second <- colMeans(portfolio_returns_M[second_idx, portfolio_cols_M], na.rm = TRUE)
+portfolio_stats_M_full   <- compute_mean_tstat(portfolio_returns_M, portfolio_cols_M, full_idx)
+portfolio_stats_M_first  <- compute_mean_tstat(portfolio_returns_M, portfolio_cols_M, first_idx)
+portfolio_stats_M_second <- compute_mean_tstat(portfolio_returns_M, portfolio_cols_M, second_idx)
 
-cat("M - Full period:\n");  print(round(portfolio_means_M_full   * 100, 2))
-cat("M - First half:\n");   print(round(portfolio_means_M_first  * 100, 2))
-cat("M - Second half:\n");  print(round(portfolio_means_M_second * 100, 2))
+print_stats(portfolio_stats_M_full,   "M - Full period:")
+print_stats(portfolio_stats_M_first,  "M - First half:")
+print_stats(portfolio_stats_M_second, "M - Second half:")
 
-keep <- c(keep, "portfolio_returns_M", "portfolio_returns_IV")
-rm(list = setdiff(ls(), keep))
+#keep <- c(keep, "portfolio_returns_M", "portfolio_returns_IV")
+#rm(list = setdiff(ls(), keep))

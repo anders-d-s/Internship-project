@@ -17,10 +17,20 @@ reg_IV2_LS_MOM <- lm(IV2_LS_MOM ~ mkt + market_equity + be_me, data = data)
 reg_IV3_LS_MOM <- lm(IV3_LS_MOM ~ mkt + market_equity + be_me, data = data)
 reg_LS_IV_LS_MOM <- lm(LS_IV_LS_MOM ~ mkt + market_equity + be_me, data = data)
 
-print(coeftest(reg_IV1_LS_MOM, vcov = NeweyWest(reg_IV1_LS_MOM, lag = 6, prewhite = FALSE)))
-print(coeftest(reg_IV2_LS_MOM, vcov = NeweyWest(reg_IV2_LS_MOM, lag = 6, prewhite = FALSE)))
-print(coeftest(reg_IV3_LS_MOM, vcov = NeweyWest(reg_IV3_LS_MOM, lag = 6, prewhite = FALSE)))
-print(coeftest(reg_LS_IV_LS_MOM, vcov = NeweyWest(reg_LS_IV_LS_MOM, lag = 6, prewhite = FALSE)))
+print("IV1_LS_MOM")
+print(round(coeftest(reg_IV1_LS_MOM,
+                     vcov = NeweyWest(reg_IV1_LS_MOM, lag = 6, prewhite = FALSE)), 3))
 
+print("IV2_LS_MOM")
+print(round(coeftest(reg_IV2_LS_MOM,
+                     vcov = NeweyWest(reg_IV2_LS_MOM, lag = 6, prewhite = FALSE)), 3))
+
+print("IV3_LS_MOM")
+print(round(coeftest(reg_IV3_LS_MOM,
+                     vcov = NeweyWest(reg_IV3_LS_MOM, lag = 6, prewhite = FALSE)), 3))
+
+print("LS_IV_LS_MOM")
+print(round(coeftest(reg_LS_IV_LS_MOM,
+                     vcov = NeweyWest(reg_LS_IV_LS_MOM, lag = 6, prewhite = FALSE)), 3))
 #clean up
 rm(list = setdiff(ls(), keep))
