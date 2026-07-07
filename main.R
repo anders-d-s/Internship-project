@@ -6,9 +6,9 @@ source("requirements.R")
 
 #-------------------------------------------------------------------------
 #run post publication code
-#source("RCode/PostPublication/data.R")
-#source("RCode/PostPublication/ivol_mom_calc.R")
-#source("RCode/PostPublication/ivol_mom_groups.R")
+source("RCode/PostPublication/data.R")
+source("RCode/PostPublication/ivol_mom_calc.R")
+source("RCode/PostPublication/ivol_mom_groups.R")
 #-------------------------------------------------------------------------
 #c("22d", "252d")
 vol_type <- "252d"

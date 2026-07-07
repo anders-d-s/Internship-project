@@ -47,5 +47,19 @@ ggsave("png_files/IV1_LS_MOM_cumret.png", plot = p1, width = 8, height = 5, dpi 
 ggsave("png_files/IV2_LS_MOM_cumret.png", plot = p2, width = 8, height = 5, dpi = 300, bg = "white")
 ggsave("png_files/IV3_LS_MOM_cumret.png", plot = p3, width = 8, height = 5, dpi = 300, bg = "white")
 
+# Combine into a single stacked figure
+combined_plot <- p1 / p2 / p3 +
+  plot_annotation(
+    title = "",
+    theme = theme(plot.title = element_text(face = "bold", size = 16, hjust = 0.5))
+  )
+
+print(combined_plot)
+
+# Export combined plot
+ggsave("png_files/IV_LS_MOM_cumret_combined.png", plot = combined_plot,
+       width = 8, height = 12, dpi = 300, bg = "white")
+
+
 #clean up
 rm(list = setdiff(ls(), keep))

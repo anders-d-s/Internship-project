@@ -10,7 +10,8 @@ packages <- c(
   "readxl",
   "lubridate",
   "monotonicity",
-  "zoo"
+  "zoo",
+  "patchwork"
 )
 
 install_if_missing <- function(pkg) {
