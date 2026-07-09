@@ -7,6 +7,10 @@ monthly_mom <- mom_signal_12_1[-(1:12), ]
 row.names(monthly_mom) <- NULL
 load("Data/monthly_factors.RData")
 
+# Annualized IVOL in percent
+factor_cols_ivol <- setdiff(names(monthly_ivol), "date")
+monthly_ivol[, factor_cols_ivol] <- monthly_ivol[, factor_cols_ivol] * sqrt(252) * 100
+
 ################################################################################
 # Generalized function to create univariate portfolio assignments (any # groups)
 ################################################################################
@@ -14,7 +18,7 @@ load("Data/monthly_factors.RData")
 build_univariate_groups_n <- function(df, labels) {
   
   n_groups <- length(labels)
-  breakpoints <- seq(0, 1, length.out = n_groups + 1)  # e.g. 0, .2, .4, .6, .8, 1 for 5 groups
+  breakpoints <- seq(0, 1, length.out = n_groups + 1)
   
   factor_cols <- setdiff(names(df), "date")
   
@@ -79,7 +83,7 @@ print_date_range <- function(dates, idx, label) {
   cat(label, ":", as.character(min(dates[idx])), "to", as.character(max(dates[idx])), "\n")
 }
 
-# IVOL groups (quintiles)
+# IVOL groups (quintiles) - now sorted on annualized % IVOL
 ivol_groups_5 <- build_univariate_groups_n(
   monthly_ivol,
   labels = c("IV1", "IV2", "IV3", "IV4", "IV5")
@@ -117,7 +121,6 @@ for (i in 1:nrow(ivol_groups_5)) {
 
 portfolio_returns_IV5$IV_LS <- portfolio_returns_IV5$IV5 - portfolio_returns_IV5$IV1
 
-# Define periods
 n_months   <- nrow(portfolio_returns_IV5)
 mid_point  <- floor(n_months / 2)
 full_idx   <- 1:n_months
@@ -164,7 +167,6 @@ for (i in 1:nrow(mom_groups_5)) {
 
 portfolio_returns_M5$M_LS <- portfolio_returns_M5$M5 - portfolio_returns_M5$M1
 
-# Define periods
 n_months   <- nrow(portfolio_returns_M5)
 mid_point  <- floor(n_months / 2)
 full_idx   <- 1:n_months
@@ -185,16 +187,12 @@ print_stats(portfolio_stats_M5_full,   "M5 - Full period:")
 print_stats(portfolio_stats_M5_first,  "M5 - First half:")
 print_stats(portfolio_stats_M5_second, "M5 - Second half:")
 
-#keep <- c(keep, "portfolio_returns_M5", "portfolio_returns_IV5")
-#rm(list = setdiff(ls(), keep))
-
-
-
 #----------------------------------------------------------------------
 library(ggplot2)
 library(patchwork)
 
-load("Data/monthly_ivol_252d.RData")
+# NOTE: no reload of monthly_ivol here — it stays as annualized % IVOL
+# from the conversion earlier in the script
 
 # Generic function: average IVOL per momentum group, works for any number of groups
 compute_ivol_by_mom <- function(mom_groups, monthly_ivol, group_labels) {
@@ -219,7 +217,8 @@ compute_ivol_by_mom <- function(mom_groups, monthly_ivol, group_labels) {
     }
   }
   
-  mean_ivol <- colMeans(ivol_by_M[, group_labels], na.rm = TRUE) * 100
+  # No extra *100 needed — monthly_ivol already annualized % from earlier conversion
+  mean_ivol <- colMeans(ivol_by_M[, group_labels], na.rm = TRUE)
   data.frame(group = group_labels, ivol = as.numeric(mean_ivol))
 }
 
@@ -239,7 +238,7 @@ plot_smile <- function(df, title, line_color) {
     labs(
       title = title,
       x = NULL,
-      y = "Average IVOL (%)"
+      y = "Average Annualized IVOL (%)"
     ) +
     theme_minimal(base_size = 13) +
     theme(
@@ -251,11 +250,9 @@ plot_smile <- function(df, title, line_color) {
 p3 <- plot_smile(ivol_3, "3-Portfolio Sort", "#1B9E77")
 p5 <- plot_smile(ivol_5, "5-Portfolio Sort", "#D95F02")
 
-# Combine side by side
 combined_plot <- p3 | p5
 
 print(combined_plot)
 
-# Export as PNG
 ggsave("png_files/volatility_smile_3v5_univariate.png", plot = combined_plot,
        width = 10, height = 5, dpi = 300, bg = "white")
