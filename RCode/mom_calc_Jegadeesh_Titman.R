@@ -1,14 +1,9 @@
 load("Data/monthly_factors.RData")
 
-# Exclude date and mkt, keep only the factor return columns
 factor_cols <- setdiff(names(monthly_factors), c("date", "mkt"))
 
 log_rets <- log(1 + monthly_factors[, factor_cols])
 
-# General N-1 momentum builder:
-# window = (N-1) months, right-aligned at row t -> covers (t-(N-2)):t
-# then shift down 2 rows so the value stored at row t = sum over (t-N):(t-2),
-# i.e. an (N-1)-month cumulative return skipping the most recent month (t-1)
 build_mom_signal <- function(log_rets, N, dates) {
   
   width <- N - 1
