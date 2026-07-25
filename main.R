@@ -13,8 +13,8 @@ source("RCode/PostPublication/ivol_mom_groups.R")
 #c("22d", "252d")
 vol_type <- "252d"
 
-#c("12_1", "9_1", 6_1", "3_1")
-mom_type <- "12_1"
+#c("12_1", "9_1", 6_1", "3_1", "2_1")
+mom_type <- "2_1"
 
 #-------------------------------------------------------------------------
 mom_file_name <- paste0(
@@ -52,6 +52,8 @@ round(sapply(results, function(x) x[["MR_pval"]]), 3)
 source("Rcode/ControlForFirstPrincipalComponent.R")
 
 source("Rcode/FF3LongShortRegressions.R")
+
+source("Rcode/ControlForRet_12_1.R")
 
 source("Rcode/CumulativeReturnsPlot.R")
 

@@ -5,10 +5,6 @@ factor_cols <- setdiff(names(monthly_factors), c("date", "mkt"))
 
 log_rets <- log(1 + monthly_factors[, factor_cols])
 
-# General N-1 momentum builder:
-# window = (N-1) months, right-aligned at row t -> covers (t-(N-2)):t
-# then shift down 2 rows so the value stored at row t = sum over (t-N):(t-2),
-# i.e. an (N-1)-month cumulative return skipping the most recent month (t-1)
 build_mom_signal <- function(log_rets, N, dates) {
   
   width <- N - 1
@@ -18,9 +14,9 @@ build_mom_signal <- function(log_rets, N, dates) {
   
   n <- nrow(roll_sum)
   mom_log <- rbind(
-    matrix(NA_real_, nrow = 2, ncol = ncol(roll_sum),
+    matrix(NA_real_, nrow = 1, ncol = ncol(roll_sum),
            dimnames = list(NULL, colnames(roll_sum))),
-    roll_sum[1:(n - 2), , drop = FALSE]
+    roll_sum[1:(n - 1), , drop = FALSE]
   )
   
   mom <- exp(mom_log) - 1
@@ -34,6 +30,7 @@ mom_signal_12_1 <- build_mom_signal(log_rets, 12, monthly_factors$date)
 mom_signal_9_1  <- build_mom_signal(log_rets, 9,  monthly_factors$date)
 mom_signal_6_1  <- build_mom_signal(log_rets, 6,  monthly_factors$date)
 mom_signal_3_1  <- build_mom_signal(log_rets, 3,  monthly_factors$date)
+mom_signal_2_1  <- build_mom_signal(log_rets, 2,  monthly_factors$date)
 
 #------------------------------------------------------------------------------
 
@@ -61,15 +58,6 @@ for (i in 1:nrow(monthly_ivol)) {
 }
 
 ###########################################################################
-# MOM
-# Dependent double sort: within each IVOL group, rank on the momentum
-# signal and assign M1 (bottom 30%) / M2 (middle 40%) / M3 (top 30%).
-#
-# Momentum now comes from the pre-built signal files (mom_signal_12_1.RData
-# etc.), which already encode the N-1 month cumulative log return, skipping
-# the most recent month, and are stored on the date the signal is *used*
-# (i.e. already aligned/lagged correctly). So no manual row-index offsetting
-# against monthly_factors is needed anymore -- alignment is done by date.
 
 build_mom_groups <- function(mom_signal, ivol_groups, factor_cols) {
   
@@ -125,11 +113,13 @@ factor_cols_mom <- setdiff(names(mom_signal_12_1), "date")
 # Sanity check: the momentum signals and the IVOL groups should cover the
 # same set of factor columns
 stopifnot(identical(sort(factor_cols_mom), sort(factor_cols)))
+stopifnot(identical(sort(names(mom_signal_2_1)), sort(names(mom_signal_12_1))))
 
 mom_groups_12_1_252d_ivol <- build_mom_groups(mom_signal_12_1, ivol_groups, factor_cols_mom)
 mom_groups_9_1_252d_ivol  <- build_mom_groups(mom_signal_9_1,  ivol_groups, factor_cols_mom)
 mom_groups_6_1_252d_ivol  <- build_mom_groups(mom_signal_6_1,  ivol_groups, factor_cols_mom)
 mom_groups_3_1_252d_ivol  <- build_mom_groups(mom_signal_3_1,  ivol_groups, factor_cols_mom)
+mom_groups_2_1_252d_ivol  <- build_mom_groups(mom_signal_2_1,  ivol_groups, factor_cols_mom)
 
 ###########################################################################
 # Test
@@ -153,6 +143,7 @@ check_tab(mom_groups_12_1_252d_ivol, ivol_groups, factor_cols_mom)
 check_tab(mom_groups_9_1_252d_ivol,  ivol_groups, factor_cols_mom)
 check_tab(mom_groups_6_1_252d_ivol,  ivol_groups, factor_cols_mom)
 check_tab(mom_groups_3_1_252d_ivol,  ivol_groups, factor_cols_mom)
+check_tab(mom_groups_2_1_252d_ivol,  ivol_groups, factor_cols_mom)
 
 
-mom_groups <- mom_groups_12_1_252d_ivol
+mom_groups <- mom_groups_2_1_252d_ivol

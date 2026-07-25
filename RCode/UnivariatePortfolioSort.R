@@ -1,6 +1,6 @@
 load("Data/monthly_ivol_252d.RData")
-load("Data/mom_signal_12_1.RData")
-monthly_mom <- mom_signal_12_1[-(1:12), ]
+load("Data/mom_signal_2_1.RData")
+monthly_mom <- mom_signal_2_1[-(1:12), ]
 row.names(monthly_mom) <- NULL
 load("Data/monthly_factors.RData")
 

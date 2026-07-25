@@ -1,4 +1,4 @@
-mom_groups <- mom_groups_12_1_252d_ivol
+mom_groups <- mom_groups_2_1_252d_ivol
 load("Data/monthly_factors.RData")
 
 ################################################################################

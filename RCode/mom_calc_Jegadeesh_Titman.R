@@ -13,9 +13,9 @@ build_mom_signal <- function(log_rets, N, dates) {
   
   n <- nrow(roll_sum)
   mom_log <- rbind(
-    matrix(NA_real_, nrow = 2, ncol = ncol(roll_sum),
+    matrix(NA_real_, nrow = 1, ncol = ncol(roll_sum),
            dimnames = list(NULL, colnames(roll_sum))),
-    roll_sum[1:(n - 2), , drop = FALSE]
+    roll_sum[1:(n - 1), , drop = FALSE]
   )
   
   mom <- exp(mom_log) - 1
@@ -29,8 +29,10 @@ mom_signal_12_1 <- build_mom_signal(log_rets, 12, monthly_factors$date)
 mom_signal_9_1  <- build_mom_signal(log_rets, 9,  monthly_factors$date)
 mom_signal_6_1  <- build_mom_signal(log_rets, 6,  monthly_factors$date)
 mom_signal_3_1  <- build_mom_signal(log_rets, 3,  monthly_factors$date)
+mom_signal_2_1  <- build_mom_signal(log_rets, 2,  monthly_factors$date)
 
 save(mom_signal_12_1, file = "Data/mom_signal_12_1.RData")
 save(mom_signal_9_1,  file = "Data/mom_signal_9_1.RData")
 save(mom_signal_6_1,  file = "Data/mom_signal_6_1.RData")
 save(mom_signal_3_1,  file = "Data/mom_signal_3_1.RData")
+save(mom_signal_2_1,  file = "Data/mom_signal_2_1.RData")

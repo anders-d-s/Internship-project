@@ -91,6 +91,7 @@ load("Data/mom_signal_12_1.RData")
 load("Data/mom_signal_9_1.RData")
 load("Data/mom_signal_6_1.RData")
 load("Data/mom_signal_3_1.RData")
+load("Data/mom_signal_2_1.RData")
 
 factor_cols_mom <- setdiff(names(mom_signal_12_1), "date")
 
@@ -100,6 +101,7 @@ mom_groups_12_1_252d_ivol <- build_mom_groups(mom_signal_12_1, ivol_groups, fact
 mom_groups_9_1_252d_ivol  <- build_mom_groups(mom_signal_9_1,  ivol_groups, factor_cols_mom, N_IVOL, N_MOM)
 mom_groups_6_1_252d_ivol  <- build_mom_groups(mom_signal_6_1,  ivol_groups, factor_cols_mom, N_IVOL, N_MOM)
 mom_groups_3_1_252d_ivol  <- build_mom_groups(mom_signal_3_1,  ivol_groups, factor_cols_mom, N_IVOL, N_MOM)
+mom_groups_2_1_252d_ivol  <- build_mom_groups(mom_signal_2_1,  ivol_groups, factor_cols_mom, N_IVOL, N_MOM)
 
 ###########################################################################
 # Test
@@ -123,3 +125,4 @@ check_tab(mom_groups_12_1_252d_ivol, ivol_groups, factor_cols_mom)
 check_tab(mom_groups_9_1_252d_ivol,  ivol_groups, factor_cols_mom)
 check_tab(mom_groups_6_1_252d_ivol,  ivol_groups, factor_cols_mom)
 check_tab(mom_groups_3_1_252d_ivol,  ivol_groups, factor_cols_mom)
+check_tab(mom_groups_2_1_252d_ivol,  ivol_groups, factor_cols_mom)

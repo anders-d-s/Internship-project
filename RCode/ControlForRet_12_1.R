@@ -14,10 +14,10 @@ data$IV3_LS_MOM <- portfolio_returns_3x3$IV3_M3 - portfolio_returns_3x3$IV3_M1
 data$LS_IV_LS_MOM <- (portfolio_returns_3x3$IV3_M3 - portfolio_returns_3x3$IV3_M1) - (portfolio_returns_3x3$IV1_M3 - portfolio_returns_3x3$IV1_M1)
 
 #regressions
-reg_IV1_LS_MOM <- lm(IV1_LS_MOM ~ mkt + market_equity + be_me + ret_1_0 + ret_12_1, data = data)
-reg_IV2_LS_MOM <- lm(IV2_LS_MOM ~ mkt + market_equity + be_me + ret_1_0 + ret_12_1, data = data)
-reg_IV3_LS_MOM <- lm(IV3_LS_MOM ~ mkt + market_equity + be_me + ret_1_0 + ret_12_1, data = data)
-reg_LS_IV_LS_MOM <- lm(LS_IV_LS_MOM ~ mkt + market_equity + be_me + ret_1_0 + ret_12_1, data = data)
+reg_IV1_LS_MOM <- lm(IV1_LS_MOM ~ ret_1_0 , data = data)
+reg_IV2_LS_MOM <- lm(IV2_LS_MOM ~ ret_1_0, data = data)
+reg_IV3_LS_MOM <- lm(IV3_LS_MOM ~ ret_1_0, data = data)
+reg_LS_IV_LS_MOM <- lm(LS_IV_LS_MOM ~ ret_1_0, data = data)
 
 print("IV1_LS_MOM")
 print(round(coeftest(reg_IV1_LS_MOM,
